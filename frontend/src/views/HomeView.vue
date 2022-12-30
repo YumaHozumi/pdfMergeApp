@@ -4,7 +4,7 @@
 </template>
 
 <script>
-//import axios from "axios";
+import axios from "axios";
 
 export default {
   data() {
@@ -14,33 +14,44 @@ export default {
         "Content-Type": "multipart/form-data",
       },
       images: [],
+      encodeImg: [],
     };
   },
   methods: {
     selectedFile(e) {
       let files = e.target.files;
+      console.log(files);
       this.images.push(...files);
+      console.log(this.images.length);
     },
-    uploadFile() {
-      let reader = FileReader();
-
-      reader.readAsDataURL(this.images[0]);
-      reader.onload = () => {
-        var val = reader.result.replace(/data:.*\/.*;base64,/, '');
-        console.log(val);
-      };
-      // this.images.forEach((file, index) => {
-      //   formData.append("files[" + index + "]", file);
-      // });
-      // axios
-      //   .post("/merge", formData, this.headers)
-      //   .then((response) => {
-      //     this.books = response.data;
-      //     console.log(response);
-      //   })
-      //   .catch((e) => {
-      //     console.log(e);
-      //   });
+    async init() {
+      this.images = [];
+      this.encodeImg = [];
+      console.log("init");
+    },
+    async uploadFile() {
+      for (let i = 0; i < this.images.length; i++) {
+        let reader = await new FileReader();
+        reader.readAsDataURL(this.images[i]);
+        console.log("Completed Encode");
+        await new Promise(
+          (resolve) =>
+            (reader.onload = () => {
+              resolve();
+              let val = reader.result.replace(/data:.*\/.*;base64,/, "");
+              this.encodeImg.push(val);
+            })
+        );
+      }
+      await axios
+        .post("/merge", this.encodeImg, this.headers)
+        .then((response) => {
+          this.books = response.data;
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+      await this.init();
     },
   },
 };
