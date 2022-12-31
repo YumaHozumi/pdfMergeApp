@@ -15,6 +15,7 @@ export default {
       },
       images: [],
       encodeImg: [],
+      loading: false,
     };
   },
   methods: {
@@ -30,6 +31,7 @@ export default {
       console.log("init");
     },
     async uploadFile() {
+      this.loading = true;
       for (let i = 0; i < this.images.length; i++) {
         let reader = await new FileReader();
         reader.readAsDataURL(this.images[i]);
@@ -46,6 +48,7 @@ export default {
       await axios
         .post("/merge", this.encodeImg, this.headers)
         .then((response) => {
+          this.loading = false;
           this.books = response.data;
         })
         .catch((e) => {
