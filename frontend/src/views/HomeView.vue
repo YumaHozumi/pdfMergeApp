@@ -1,6 +1,13 @@
 <template>
-  <input type="file" @change="selectedFile" multiple />
-  <button @click="uploadFile">送信</button>
+  <div v-show="!loading">
+    <input type="file" @change="selectedFile" multiple />
+    <button @click="uploadFile">送信</button>
+  </div>
+  <div v-show="loading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -34,14 +41,14 @@ export default {
       this.loading = true;
       for (let i = 0; i < this.images.length; i++) {
         let reader = await new FileReader();
+        //画像をbase64に変換する
         reader.readAsDataURL(this.images[i]);
         console.log("Completed Encode");
         await new Promise(
           (resolve) =>
             (reader.onload = () => {
               resolve();
-              let val = reader.result.replace(/data:.*\/.*;base64,/, "");
-              this.encodeImg.push(val);
+              this.encodeImg.push(reader.result);
             })
         );
       }
@@ -49,12 +56,31 @@ export default {
         .post("/merge", this.encodeImg, this.headers)
         .then((response) => {
           this.loading = false;
-          this.books = response.data;
+          console.log(response);
+          if (response.data !== null) {
+            //レスポンスがnullでないなら
+            //画像を保存
+            let a = document.createElement("a");
+            a.href = "data:application/pdf;base64," + response.data;
+            a.download = this.random() + ".pdf";
+            a.click();
+            a.remove();
+          }
         })
         .catch((e) => {
           console.log(e);
         });
       await this.init();
+    },
+    random() {
+      //ランダムなファイル名を生成するための文字列生成用ファンクション
+      let chars =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      let rand_str = "";
+      for (var i = 0; i < 10; i++) {
+        rand_str += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return rand_str;
     },
   },
 };
