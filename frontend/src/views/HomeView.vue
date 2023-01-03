@@ -6,7 +6,12 @@
       <v-container fluid>
         <v-row justify="center" class="my-5">
           <div v-show="!loading">
-            <div id="dragDropArea">
+            <div
+              id="dragDropArea"
+              @dragenter="dragEnter"
+              @drop.prevent="dropFile"
+              @dragover.prevent
+            >
               <div class="drag-drop-inside">
                 <p class="drag-drap-info">ここにファイルをドロップ</p>
                 <p>または</p>
@@ -20,7 +25,10 @@
                 </p>
               </div>
             </div>
-            <button @click="uploadFile">送信</button>
+            <v-btn @click="uploadFile" class="my-3" color="blue" v-if="isPush">
+              Upload
+              <v-icon right dark>mdi-cloud-upload</v-icon>
+            </v-btn>
           </div>
           <div v-show="loading">
             <div class="spinner-border text-primary" role="status">
@@ -62,22 +70,17 @@ export default {
       encodeImg: [],
       loading: false,
       urls: [],
+      isPush: false,
     };
   },
   methods: {
     selectedFile(e) {
+      this.isPush = true;
       let files = e.target.files;
-      console.log(files);
-      this.images.push(...files);
-      console.log(this.images.length);
-      let regex = /\.pdf$/;
-      for (let i = 0; i < files.length; i++) {
-        let isPDF = regex.test(files[i].name); // isPDF is true
-        let file = URL.createObjectURL(files[i]);
-        this.urls.push({ file: file, isPDF: isPDF });
-      }
+      this.pushfiles(files);
     },
     async init() {
+      this.isPush = false;
       this.images = [];
       this.encodeImg = [];
       console.log("init");
@@ -126,6 +129,24 @@ export default {
         rand_str += chars.charAt(Math.floor(Math.random() * chars.length));
       }
       return rand_str;
+    },
+    dragEnter() {
+      console.log("test");
+    },
+    dropFile(event) {
+      this.isPush = true;
+      console.log(this.isPush);
+      let files = event.dataTransfer.files;
+      this.pushfiles(files);
+    },
+    pushfiles(files) {
+      this.images.push(...files);
+      let regex = /\.pdf$/;
+      for (let i = 0; i < files.length; i++) {
+        let isPDF = regex.test(files[i].name); // isPDF is true
+        let file = URL.createObjectURL(files[i]);
+        this.urls.push({ file: file, isPDF: isPDF });
+      }
     },
   },
 };

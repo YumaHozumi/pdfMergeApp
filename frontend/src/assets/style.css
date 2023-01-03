@@ -30,7 +30,14 @@ padding: 10px;
 border: #ddd dashed 5px;
 min-height: 200px;
 text-align: center;
+transition: background-color 0.5s, border 0.5s;
 }
+
+#dragDropArea:hover {
+    background-color: rgb(232, 244, 249);
+    border: rgb(195, 235, 251) dashed 5px;
+}
+
 #dragDropArea p {
 color: #999;
 font-weight: bold;
