@@ -37,14 +37,26 @@
           </div>
         </v-row>
 
-        <v-row>
-          <v-col cols="4" class="border" v-for="url in urls" :key="url">
-            <v-card v-if="url.isPDF">
-              <iframe :src="url.file"></iframe>
-            </v-card>
-            <v-img :src="url.file" v-else />
-          </v-col>
-        </v-row>
+        <TransitionGroup name="items-list" v-if="isPush">
+          <v-row key="row">
+            <v-col
+              cols="4"
+              class="border"
+              v-for="(url, index) in urls"
+              :key="url.id"
+              draggable="true"
+              @dragstart="dragStartItem(index, $event)"
+              @dragenter="dragEnterItem(index)"
+              @dragover.stop.prevent="dragOverItem"
+              @dragend.stop.prevent="dragEndItem"
+            >
+              <v-card v-if="url.isPDF">
+                <iframe :src="url.file"></iframe>
+              </v-card>
+              <v-img :src="url.file" v-else />
+            </v-col>
+          </v-row>
+        </TransitionGroup>
       </v-container>
     </v-main>
   </v-app>
@@ -71,6 +83,8 @@ export default {
       loading: false,
       urls: [],
       isPush: false,
+      draggingItem: null,
+      id: 0,
     };
   },
   methods: {
@@ -145,8 +159,31 @@ export default {
       for (let i = 0; i < files.length; i++) {
         let isPDF = regex.test(files[i].name); // isPDF is true
         let file = URL.createObjectURL(files[i]);
-        this.urls.push({ file: file, isPDF: isPDF });
+        this.urls.push({ id: this.id, file: file, isPDF: isPDF });
+        this.id++;
       }
+    },
+    dragStartItem(index, e) {
+      this.draggingItem = index;
+      e.dataTransfer.effectAllowed = "move";
+      e.target.style.opacity = 0.5;
+    },
+    dragEnterItem(index) {
+      if (index == this.draggingItem) return;
+      const deleteElement = this.urls.splice(this.draggingItem, 1)[0];
+      const imageDelete = this.images.splice(this.draggingItem, 1)[0];
+      this.urls.splice(index, 0, deleteElement);
+      this.images.splice(index, 0, imageDelete);
+      this.draggingItem = index;
+    },
+    dragOverItem(e) {
+      e.dataTransfer.dropEffect = "move";
+    },
+    dragEndItem(e) {
+      e.target.style.opacity = 1;
+      this.draggingItem = null;
+      console.log(this.urls);
+      console.log(this.images);
     },
   },
 };
