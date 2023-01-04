@@ -6,12 +6,7 @@
       <v-container fluid>
         <v-row justify="center" class="my-5">
           <div v-show="!loading">
-            <div
-              id="dragDropArea"
-              @dragenter="dragEnter"
-              @drop.prevent="dropFile"
-              @dragover.prevent
-            >
+            <div id="dragDropArea" @drop.prevent="dropFile" @dragover.prevent>
               <div class="drag-drop-inside">
                 <p class="drag-drap-info">ここにファイルをドロップ</p>
                 <p>または</p>
@@ -28,7 +23,6 @@
                     <v-icon left color="red">mdi-alert-circle</v-icon>
                     <span>pdf/png/jpeg/jpgのみ使用できます</span>
                   </v-layout>
-
                 </v-expand-transition>
               </div>
             </div>
@@ -43,7 +37,6 @@
             </div>
           </div>
         </v-row>
-        <p>{{ images.length }}</p>
 
         <TransitionGroup name="items-list" v-if="isPush">
           <v-row key="row">
@@ -58,6 +51,9 @@
               @dragover.stop.prevent="dragOverItem"
               @dragend.stop.prevent="dragEndItem"
             >
+              <v-icon class="close" @click="deleteFile(index)"
+                >mdi-trash-can-outline</v-icon
+              >
               <v-card v-if="url.isPDF">
                 <iframe :src="url.file"></iframe>
               </v-card>
@@ -128,7 +124,6 @@ export default {
         .post("/merge", this.encodeImg, this.headers)
         .then((response) => {
           this.loading = false;
-          console.log(response);
           if (response.data !== null) {
             //レスポンスがnullでないなら
             //画像を保存
@@ -154,17 +149,13 @@ export default {
       }
       return rand_str;
     },
-    dragEnter() {
-      console.log("test");
-    },
     dropFile(event) {
       this.isPush = true;
-      console.log(this.isPush);
       let files = event.dataTransfer.files;
       this.pushfiles(files);
     },
     pushfiles(files) {
-      if(!this.isImage(files)) {
+      if (!this.isImage(files)) {
         this.isError = true;
         return;
       }
@@ -197,18 +188,19 @@ export default {
     dragEndItem(e) {
       e.target.style.opacity = 1;
       this.draggingItem = null;
-      console.log(this.urls);
-      console.log(this.images);
     },
     isImage(files) {
       let regex = /\.(pdf|jpeg|jpg|png)$/;
-      for(let i = 0; i < files.length; i++){
+      for (let i = 0; i < files.length; i++) {
         let isImg = regex.test(files[i].name);
-        console.log(isImg + "test");
-        if(!isImg) return false;
+        if (!isImg) return false;
       }
       return true;
-    }
+    },
+    deleteFile(index) {
+      this.urls.splice(index, 1);
+      this.images.splice(index, 1);
+    },
   },
 };
 </script>
