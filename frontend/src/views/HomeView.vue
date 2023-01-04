@@ -23,6 +23,13 @@
                     accept="image/png,image/jpeg,application/pdf,image/jpg"
                   />
                 </p>
+                <v-expand-transition>
+                  <v-layout class="error-msg" v-if="isError">
+                    <v-icon left color="red">mdi-alert-circle</v-icon>
+                    <span>pdf/png/jpeg/jpgのみ使用できます</span>
+                  </v-layout>
+
+                </v-expand-transition>
               </div>
             </div>
             <v-btn @click="uploadFile" class="my-3" color="blue" v-if="isPush">
@@ -36,6 +43,7 @@
             </div>
           </div>
         </v-row>
+        <p>{{ images.length }}</p>
 
         <TransitionGroup name="items-list" v-if="isPush">
           <v-row key="row">
@@ -84,6 +92,7 @@ export default {
       urls: [],
       isPush: false,
       draggingItem: null,
+      isError: false,
       id: 0,
     };
   },
@@ -97,6 +106,7 @@ export default {
       this.isPush = false;
       this.images = [];
       this.encodeImg = [];
+      this.urls = [];
       console.log("init");
     },
     async uploadFile() {
@@ -154,6 +164,10 @@ export default {
       this.pushfiles(files);
     },
     pushfiles(files) {
+      if(!this.isImage(files)) {
+        this.isError = true;
+        return;
+      }
       this.images.push(...files);
       let regex = /\.pdf$/;
       for (let i = 0; i < files.length; i++) {
@@ -162,6 +176,7 @@ export default {
         this.urls.push({ id: this.id, file: file, isPDF: isPDF });
         this.id++;
       }
+      this.isError = false;
     },
     dragStartItem(index, e) {
       this.draggingItem = index;
@@ -185,6 +200,15 @@ export default {
       console.log(this.urls);
       console.log(this.images);
     },
+    isImage(files) {
+      let regex = /\.(pdf|jpeg|jpg|png)$/;
+      for(let i = 0; i < files.length; i++){
+        let isImg = regex.test(files[i].name);
+        console.log(isImg + "test");
+        if(!isImg) return false;
+      }
+      return true;
+    }
   },
 };
 </script>
