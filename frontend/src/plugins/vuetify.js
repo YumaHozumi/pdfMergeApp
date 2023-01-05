@@ -9,6 +9,9 @@ import "@mdi/font/css/materialdesignicons.css";
 const vuetify = createVuetify({
   components,
   directives,
+  // icons: {
+  //   iconfont: "mdi",
+  // },
 });
 
 export default vuetify;

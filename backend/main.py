@@ -10,7 +10,6 @@ from pdf2image import convert_from_bytes
 
 app = FastAPI()
 
-
 @app.post("/merge")
 async def start(files: List[str]):
     images = []
@@ -21,7 +20,7 @@ async def start(files: List[str]):
             file = re.sub('data:.*\/.*;base64,', "", file)
             img_raw = base64.b64decode(file)
             # PILだとpdf形式のやつ読めないので、pdf2imageを使う
-            changeimages = convert_from_bytes(img_raw)
+            changeimages = convert_from_bytes(img_raw, paths_only=True)
             for img in changeimages:
                 images.append(img)
         else: # 画像がpdf以外のやつの場合

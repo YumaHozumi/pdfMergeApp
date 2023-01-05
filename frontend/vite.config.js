@@ -11,10 +11,12 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
-  server: {
-    port: 10500,
-    proxy: {
-      "^/merge": "http://localhost:8000",
-    },
-  },
+  // server: {
+  
+  // }
+  // server: {
+  //   proxy: {
+  //     "^/merge": "http://backend:8080",
+  //   },
+  // },
 });

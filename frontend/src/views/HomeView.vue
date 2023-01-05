@@ -66,11 +66,11 @@
   </v-app>
 </template>
 
-<style src="../assets/style.css"></style>
+<style src="@/assets/style.css"></style>
 
 <script>
 import axios from "axios";
-import MyHeader from "../components/MyHeader.vue";
+import MyHeader from "@/components/MyHeader.vue";
 
 export default {
   components: {
