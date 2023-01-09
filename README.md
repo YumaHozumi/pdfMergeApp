@@ -19,9 +19,10 @@
 ![Uploadボタン](fig/uploadButton.png)
 
 ## 3. ダウンロードフォルダに自動で、結合ファイルが保存される
+[結合されたpdfの例](/fig/yGn7U9TLll.pdf)
 
 ## その他
----
+
 ### プレビュ―をドラッグして結合の順番を変更
 
 ![pdf結合の順番変更](fig/dragPreview.jpg)
