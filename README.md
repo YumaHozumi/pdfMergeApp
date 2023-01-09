@@ -1,5 +1,5 @@
 # PDF Merge App
-![トップページ](https://hzmintech.com/img/sample-merge.b3d79616.png)
+![トップページ](fig/sample-merge.png)
 
 # 概要
 本アプリは、複数のPDFファイルを結合することができるアプリです。「jpegやpngを一括でpdfに変換・結合を行ってくれるWeb Appがないなあ」と不便に感じた経験から開発しました。
