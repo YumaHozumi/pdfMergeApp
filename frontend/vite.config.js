@@ -12,8 +12,10 @@ export default defineConfig({
     },
   },
   // server: {
-  
-  // }
+  //   proxy: {
+  //     "^/merge": "http://localhost:8000",
+  //   },
+  // },
   // server: {
   //   proxy: {
   //     "^/merge": "http://backend:8080",

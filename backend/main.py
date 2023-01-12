@@ -13,18 +13,20 @@ app = FastAPI()
 @app.post("/merge")
 async def start(files: List[str]):
     images = []
+    image_pattern = re.compile(r'^(data:image/(png|jpeg|jpg);base64,)')
+    pdf_pattern = re.compile(r'^(data:application/pdf;base64,)')
     for file in files:
         # 画像じゃないやつは弾く
         if not (is_image_base64(file) or is_pdf(file)): return None
         if is_pdf(file): # 画像がpdfの場合
-            file = re.sub('data:.*\/.*;base64,', "", file)
+            file = pdf_pattern.sub("", file)
             img_raw = base64.b64decode(file)
             # PILだとpdf形式のやつ読めないので、pdf2imageを使う
             changeimages = convert_from_bytes(img_raw, paths_only=True)
             for img in changeimages:
                 images.append(img)
         else: # 画像がpdf以外のやつの場合
-            file = re.sub('data:.*\/.*;base64,', "", file)
+            file = image_pattern.sub('', file)
             img_raw = base64.b64decode(file)
             img_to_rgb = await base64_to_img(img_raw)
             images.append(img_to_rgb)

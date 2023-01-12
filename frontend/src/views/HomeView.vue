@@ -71,6 +71,7 @@
 <script>
 import axios from "axios";
 import MyHeader from "@/components/MyHeader.vue";
+import { handleError } from "vue";
 
 export default {
   components: {
@@ -112,13 +113,12 @@ export default {
         //画像をbase64に変換する
         reader.readAsDataURL(this.images[i]);
         console.log("Completed Encode");
-        await new Promise(
-          (resolve) =>
-            (reader.onload = () => {
-              resolve();
-              this.encodeImg.push(reader.result);
-            })
-        );
+        await new Promise((resolve) =>
+          (reader.onload = () => {
+            resolve();
+            this.encodeImg.push(reader.result);
+          })
+        ).catch(handleError);
       }
       await axios
         .post("/merge", this.encodeImg, this.headers)
