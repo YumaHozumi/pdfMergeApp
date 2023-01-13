@@ -2,7 +2,7 @@ version: '3'
 
 services:
   backend:
-    image: pdfmerge-backend:1.0
+    image: pdfmerge-backend:2.0
     container_name: fastapi-container
     networks:
       - webnet

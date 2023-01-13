@@ -11,11 +11,11 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
-  // server: {
-  //   proxy: {
-  //     "^/merge": "http://localhost:8000",
-  //   },
-  // },
+  server: {
+    proxy: {
+      "^/merge": "http://localhost:8000",
+    },
+  },
   // server: {
   //   proxy: {
   //     "^/merge": "http://backend:8080",

@@ -113,11 +113,12 @@ export default {
         //画像をbase64に変換する
         reader.readAsDataURL(this.images[i]);
         console.log("Completed Encode");
-        await new Promise((resolve) =>
-          (reader.onload = () => {
-            resolve();
-            this.encodeImg.push(reader.result);
-          })
+        await new Promise(
+          (resolve) =>
+            (reader.onload = () => {
+              resolve();
+              this.encodeImg.push(reader.result);
+            })
         ).catch(handleError);
       }
       await axios
