@@ -39,6 +39,12 @@ async def merge(images):
     merger = PyPDF2.PdfFileMerger()
     output_file = "complete_" + randomname(15) + ".pdf"
     paths = []
+
+    # ./tempディレクトリが存在しない場合は作成する
+    temp_dir = "./temp"
+    if not os.path.exists(temp_dir):
+        os.makedirs(temp_dir)
+
     for image in images:
         filename = randomname(20) + ".pdf"
         path = os.path.join(".", "temp", filename)
