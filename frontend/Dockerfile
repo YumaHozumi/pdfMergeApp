@@ -4,14 +4,15 @@ WORKDIR /app
 
 RUN npm install -g http-server
 
-COPY ./frontend/package*.json ./
+COPY ./package*.json ./
 
-RUN npm install \
-&& mkdir dist
+RUN npm install
+
+COPY . .
+
+RUN npm run build
 
 WORKDIR /app/dist
-
-COPY ./frontend/dist/ .
 
 EXPOSE 8080
 CMD ["http-server", "-P", "http://backend:8080"]
