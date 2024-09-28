@@ -7,10 +7,14 @@ import PyPDF2
 import random, string
 import re, os
 from pdf2image import convert_from_bytes
+import asyncio
+import aiofiles
+from function.utils import measure_time
 
 app = FastAPI()
 
 @app.post("/merge")
+@measure_time
 async def start(files: List[str]):
     images = []
     image_pattern = re.compile(r'^(data:image/(png|jpeg|jpg);base64,)')
@@ -58,14 +62,14 @@ async def merge(images):
 
 
 async def base64_to_img(img):
-    new_img = Image.open(BytesIO(img))
+    # 非同期で画像を開く
+    new_img = await asyncio.to_thread(Image.open, BytesIO(img))
     img_to_rgb = new_img.convert("RGB")
     return img_to_rgb
 
 async def img_to_base64(img_path):
-    data = None
-    with open(img_path, 'rb') as f:
-        data = f.read()
+    async with aiofiles.open(img_path, 'rb') as f:
+        data = await f.read()
     output_base64 = base64.b64encode(data)
     return output_base64
 
